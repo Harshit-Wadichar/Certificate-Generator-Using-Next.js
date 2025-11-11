@@ -4,6 +4,7 @@ import { useState } from 'react';
 import CertificateForm from '../components/CertificateForm';
 import CertificatePreview from '../components/CertificatePreview';
 import { generateCertificatePDF } from '../lib/pdfGenerator';
+import '../styles/home.css'; // ← import the external CSS
 
 export default function Home() {
   const [recipientName, setRecipientName] = useState('');
@@ -13,6 +14,15 @@ export default function Home() {
   const handleGeneratePreview = (name: string) => {
     setRecipientName(name);
     setShowPreview(true);
+
+    // wait a tick for the preview to render, then scroll to it
+    // short timeout is fine for client-rendered content
+    setTimeout(() => {
+      const previewEl = document.getElementById('certificate-preview');
+      if (previewEl) {
+        previewEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 120);
   };
 
   const handleDownloadPDF = async () => {
@@ -37,21 +47,27 @@ export default function Home() {
     <main className="main-container">
       <header className="header">
         <h1>Certificate Generation System</h1>
-        <p>Aiking Solution - Professional Certification Platform</p>
+        <p className="subtitle">Aiking Solution — Professional Certification Platform</p>
       </header>
 
       <div className="content">
-        <CertificateForm 
-          onGenerate={handleGeneratePreview} 
-          isLoading={isLoading}
-        />
-        
-        {showPreview && (
-          <CertificatePreview
-            name={recipientName}
-            onDownload={handleDownloadPDF}
+        {/* Form (top) */}
+        <div className="form-wrapper">
+          <CertificateForm 
+            onGenerate={handleGeneratePreview} 
             isLoading={isLoading}
           />
+        </div>
+
+        {/* Preview (below form) */}
+        {showPreview && (
+          <div id="certificate-preview" className="preview-wrapper">
+            <CertificatePreview
+              name={recipientName}
+              onDownload={handleDownloadPDF}
+              isLoading={isLoading}
+            />
+          </div>
         )}
       </div>
     </main>

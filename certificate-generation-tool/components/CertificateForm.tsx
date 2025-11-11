@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import '../styles/CertificateForm.css';
+
 
 interface CertificateFormProps {
   onGenerate: (name: string) => void;
