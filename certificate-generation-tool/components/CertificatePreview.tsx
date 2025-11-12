@@ -1,4 +1,5 @@
 import '../styles/CertificatePreview.css';
+import Image from 'next/image';
 
 interface CertificatePreviewProps {
   name: string;
@@ -30,16 +31,7 @@ export default function CertificatePreview({ name, onDownload, isLoading }: Cert
           <div className="cert-top">
             <div className="brand">
               {/* replace this SVG with your real logo if available */}
-              <svg className="brand-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                <defs>
-                  <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
-                    <stop offset="0" stopColor="#4f46e5" />
-                    <stop offset="1" stopColor="#7c3aed" />
-                  </linearGradient>
-                </defs>
-                <circle cx="50" cy="50" r="45" fill="url(#g1)"/>
-                <text x="50%" y="56%" textAnchor="middle" fontFamily="Georgia, serif" fontWeight="700" fontSize="40" fill="#fff">A</text>
-              </svg>
+             <Image src="/logo.png" width={40} height={40}/>
               <div className="brand-info">
                 <div className="brand-name">Aiking Solution</div>
                 <div className="brand-small">Professional Certification</div>
