@@ -4,23 +4,23 @@ import { useState } from 'react';
 import CertificateForm from '../components/CertificateForm';
 import CertificatePreview from '../components/CertificatePreview';
 import { generateCertificatePDF } from '../lib/pdfGenerator';
-import '../styles/home.css'; // ← import the external CSS
 
 export default function Home() {
   const [recipientName, setRecipientName] = useState('');
+  const [selectedLayout, setSelectedLayout] = useState<'classic' | 'modern'>('classic');
   const [showPreview, setShowPreview] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleGeneratePreview = (name: string) => {
+  const handleGeneratePreview = (name: string, layout: 'classic' | 'modern') => {
     setRecipientName(name);
+    setSelectedLayout(layout);
     setShowPreview(true);
 
     // wait a tick for the preview to render, then scroll to it
-    // short timeout is fine for client-rendered content
     setTimeout(() => {
       const previewEl = document.getElementById('certificate-preview');
       if (previewEl) {
-        previewEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        previewEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }, 120);
   };
@@ -32,7 +32,8 @@ export default function Home() {
     try {
       const certificateElement = document.getElementById('certificate-template');
       if (certificateElement) {
-        const fileName = `Certificate_${recipientName.replace(/\s+/g, '_')}.pdf`;
+        // We use the layout name in the file name
+        const fileName = `Certificate_${selectedLayout}_${recipientName.replace(/\s+/g, '_')}.pdf`;
         await generateCertificatePDF(certificateElement, fileName);
       }
     } catch (error) {
@@ -44,26 +45,37 @@ export default function Home() {
   };
 
   return (
-    <main className="main-container">
-      <header className="header">
-        <h1>Certificate Generation System</h1>
-        <p className="subtitle">Aiking Solution — Professional Certification Platform</p>
+    <main className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-blue-100 selection:text-blue-900">
+      <header className="max-w-3xl text-center mb-12 space-y-4">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 tracking-tight">
+          Certificate Generation System
+        </h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Create professional, verifiable certificates for Aiking Solution candidates in seconds.
+        </p>
       </header>
 
-      <div className="content">
-        {/* Form (top) */}
-        <div className="form-wrapper">
+      <div className="w-full max-w-5xl flex flex-col items-center gap-12">
+        {/* Form Section */}
+        <div className="w-full flex justify-center">
           <CertificateForm 
             onGenerate={handleGeneratePreview} 
             isLoading={isLoading}
           />
         </div>
 
-        {/* Preview (below form) */}
+        {/* Preview Section */}
         {showPreview && (
-          <div id="certificate-preview" className="preview-wrapper">
+          <div id="certificate-preview" className="w-full animate-in fade-in zoom-in-95 duration-500">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="h-px bg-gray-200 flex-1"></div>
+              <span className="text-sm font-medium text-gray-400 uppercase tracking-widest">Preview Generated</span>
+              <div className="h-px bg-gray-200 flex-1"></div>
+            </div>
+            
             <CertificatePreview
               name={recipientName}
+              layout={selectedLayout}
               onDownload={handleDownloadPDF}
               isLoading={isLoading}
             />
